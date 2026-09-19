@@ -5,3 +5,10 @@ debug-device.html
 .DS_Store
 Thumbs.db
 icons/icone-original.png
+
+# Backups internos
+*.bak-modelo1
+*.bak-modelo2
+*.pre-hashes
+*.pre-*
+*.bak
