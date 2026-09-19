@@ -45,7 +45,7 @@
       <p id="header-subtitle" class="header-subtitle">Calculadora Técnica de Usinagem</p>
     </div>
     <div class="header-indicator">
-      <span id="module-indicator-icon" class="module-icon" aria-hidden="true">📐</span>
+      <span id="module-indicator-icon" class="module-icon" aria-hidden="true"></span>
       <span id="module-indicator-name" class="module-name">Trigonometria</span>
     </div>
     <button id="open-options-btn" class="icon-btn" type="button" aria-label="Opções">
@@ -98,69 +98,73 @@
       <nav id="menu-list" class="menu-list">
 
         <div class="menu-category">
-          <span class="menu-category-title">📐 CÁLCULOS</span>
+          <span class="menu-category-title" data-icon="cat-calculos">CÁLCULOS</span>
           <ul>
             <li data-module="trig" class="menu-item">
-              <span class="menu-icon" aria-hidden="true">📐</span>
+              <span class="menu-icon" aria-hidden="true" data-icon="trig"></span>
               <span class="menu-label">Trigonometria</span>
             </li>
             <li data-module="coni" class="menu-item">
-              <span class="menu-icon" aria-hidden="true">📏</span>
+              <span class="menu-icon" aria-hidden="true" data-icon="coni"></span>
               <span class="menu-label">Conicidade</span>
             </li>
             <li data-module="poly" class="menu-item">
-              <span class="menu-icon" aria-hidden="true">⬡</span>
+              <span class="menu-icon" aria-hidden="true" data-icon="poly"></span>
               <span class="menu-label">Polígonos</span>
             </li>
             <li data-module="furos" class="menu-item">
-              <span class="menu-icon" aria-hidden="true">⚫</span>
+              <span class="menu-icon" aria-hidden="true" data-icon="furos"></span>
               <span class="menu-label">Furação Circular</span>
             </li>
             <li data-module="rosca" class="menu-item">
-              <span class="menu-icon" aria-hidden="true">🌀</span>
+              <span class="menu-icon" aria-hidden="true" data-icon="rosca"></span>
               <span class="menu-label">Roscas</span>
             </li>
           </ul>
         </div>
 
         <div class="menu-category">
-          <span class="menu-category-title">📊 CONSULTAS</span>
+          <span class="menu-category-title" data-icon="cat-consultas">CONSULTAS</span>
           <ul>
             <li data-module="tol" class="menu-item">
-              <span class="menu-icon" aria-hidden="true">📊</span>
+              <span class="menu-icon" aria-hidden="true" data-icon="tol"></span>
               <span class="menu-label">Tolerâncias ISO</span>
             </li>
             <li data-module="chaveta" class="menu-item">
-              <span class="menu-icon" aria-hidden="true">🔧</span>
+              <span class="menu-icon" aria-hidden="true" data-icon="chaveta"></span>
               <span class="menu-label">Chaveta DIN 6885</span>
             </li>
             <li data-module="conicpad" class="menu-item">
-              <span class="menu-icon" aria-hidden="true">🎯</span>
+              <span class="menu-icon" aria-hidden="true" data-icon="conicpad"></span>
               <span class="menu-label">Conicidades Padrão</span>
             </li>
           </ul>
         </div>
 
         <div class="menu-category">
-          <span class="menu-category-title">⚙️ PRODUÇÃO</span>
+          <span class="menu-category-title" data-icon="cat-producao">PRODUÇÃO</span>
           <ul>
             <li data-module="potencia" class="menu-item">
-              <span class="menu-icon" aria-hidden="true">⚡</span>
+              <span class="menu-icon" aria-hidden="true" data-icon="potencia"></span>
               <span class="menu-label">Potência de Corte</span>
             </li>
             <li data-module="prog" class="menu-item">
-              <span class="menu-icon" aria-hidden="true">🖥️</span>
+              <span class="menu-icon" aria-hidden="true" data-icon="prog"></span>
               <span class="menu-label">Programação CNC</span>
             </li>
           </ul>
         </div>
 
         <div class="menu-category">
-          <span class="menu-category-title">💬 SUPORTE</span>
+          <span class="menu-category-title" data-icon="cat-suporte">SUPORTE</span>
           <ul>
             <li data-module="consult" class="menu-item">
-              <span class="menu-icon" aria-hidden="true">💬</span>
+              <span class="menu-icon" aria-hidden="true" data-icon="consult"></span>
               <span class="menu-label">Consultoria</span>
+            </li>
+            <li class="menu-item" id="menu-share" data-action="share">
+              <span class="menu-icon" aria-hidden="true">📤</span>
+              <span class="menu-label">Compartilhar app</span>
             </li>
           </ul>
         </div>

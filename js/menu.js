@@ -1,3 +1,4 @@
+import { ICONS } from './icons.js';
 // menu.js — Menu lateral (abertura, fechamento, item ativo)
 
 let overlayEl = null;
@@ -116,4 +117,87 @@ export function initOptionsMenu() {
 
 export function closeOptionsMenu() {
   if (optionsMenuEl) optionsMenuEl.classList.add('hidden');
+}
+
+// ═══════════════════════════════════════════════════════════
+// BOTÃO "COMPARTILHAR APP"
+// ═══════════════════════════════════════════════════════════
+
+export function initShareButton() {
+  const btn = document.getElementById('menu-share');
+  if (!btn || btn.dataset.wired === '1') return;
+  btn.dataset.wired = '1';
+
+  btn.addEventListener('click', async () => {
+    // Fecha o menu lateral
+    closeMenu();
+
+    const url = window.location.href;
+    const texto = 'Casillas App — Calculadora Técnica de Usinagem';
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Casillas App',
+          text: texto,
+          url: url
+        });
+      } catch {
+        // Usuário cancelou — ignorar
+      }
+    } else {
+      // Fallback: copia para clipboard
+      try {
+        await navigator.clipboard.writeText(`${texto}\n${url}`);
+        // Importa showToast dinamicamente
+        const { showToast } = await import('./utils.js');
+        showToast('Link copiado!', 'success');
+      } catch {
+        const { showToast } = await import('./utils.js');
+        showToast('Não foi possível compartilhar', 'error');
+      }
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// INJETAR SVGs NOS TÍTULOS DAS CATEGORIAS
+// ═══════════════════════════════════════════════════════════
+
+export function renderMenuIcons() {
+  // Injeta nos títulos das categorias
+  const titulos = document.querySelectorAll('.menu-category-title[data-icon]');
+  titulos.forEach((titulo) => {
+    const key = titulo.dataset.icon;
+    const fn = ICONS[key];
+    if (!fn) return;
+
+    // Verifica se já tem SVG (evita duplicar)
+    if (titulo.querySelector('svg')) return;
+
+    // Cria um wrapper para o ícone
+    const iconWrap = document.createElement('span');
+    iconWrap.className = 'menu-category-icon';
+    iconWrap.innerHTML = fn(14);
+
+    // Insere o ícone ANTES do texto
+    titulo.insertBefore(iconWrap, titulo.firstChild);
+  });
+
+  // Injeta nos ícones dos módulos (menu lateral)
+  const menuItens = document.querySelectorAll('.menu-item[data-module]');
+  menuItens.forEach((item) => {
+    const key = item.dataset.module;
+    const fn = ICONS[key];
+    if (!fn) return;
+
+    const iconEl = item.querySelector('.menu-icon');
+    if (!iconEl) return;
+
+    // Verifica se já tem SVG (evita duplicar)
+    if (iconEl.querySelector('svg')) return;
+
+    iconEl.innerHTML = fn(16);
+    iconEl.classList.add('menu-icon-svg');
+  });
 }

@@ -5,7 +5,8 @@ import { showToast } from './utils.js';
 import { loadInitialState, persistCurrentModule, appState } from './state.js';
 import { checkTrialStatus } from './trial.js';
 import { initKeyboard, bindInputsToKeyboard, hideKeyboard } from './keyboard.js';
-import { initMenu, setActiveMenuItem, initOptionsMenu, closeOptionsMenu } from './menu.js';
+import {initMenu, setActiveMenuItem, initOptionsMenu, closeOptionsMenu, initShareButton, renderMenuIcons } from './menu.js';
+import { ICONS } from './icons.js';
 
 // Registro dos módulos (carregamento dinâmico)
 const MODULE_LOADERS = {
@@ -60,7 +61,15 @@ async function loadModule(key) {
     const headerName = document.getElementById('module-indicator-name');
     const headerIcon = document.getElementById('module-indicator-icon');
     if (headerName) headerName.textContent = title.name;
-    if (headerIcon) headerIcon.textContent = title.icon;
+    if (headerIcon) {
+      // Usa SVG customizado se disponível, senão cai no emoji
+      const iconFn = ICONS[key];
+      if (iconFn) {
+        headerIcon.innerHTML = iconFn(20);
+      } else {
+        headerIcon.textContent = title.icon;
+      }
+    }
 
     mod.render(content);
     bindInputsToKeyboard(content);
@@ -213,6 +222,8 @@ async function boot() {
 
   await loadInitialState();
   initMenu(loadModule);
+  renderMenuIcons();
+  initShareButton();
   initOptionsMenu();
   wireOptionsButtons();
 

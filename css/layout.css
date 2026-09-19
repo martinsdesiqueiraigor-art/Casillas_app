@@ -67,6 +67,20 @@ body {
 .module-icon {
   font-size: var(--fs-lg);
   line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-primary);
+  min-width: 20px;
+  min-height: 20px;
+}
+
+.module-icon svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+  stroke: currentColor;
+  fill: none;
 }
 
 .module-name {
@@ -242,4 +256,31 @@ body {
     margin: 0 auto;
     width: 100%;
   }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ÍCONES SVG DOS ITENS DO MENU
+   ═══════════════════════════════════════════════════════════ */
+.menu-icon.menu-icon-svg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  color: var(--text-secondary);
+  transition: color var(--t-fast);
+}
+
+.menu-icon.menu-icon-svg svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+}
+
+.menu-item.active .menu-icon.menu-icon-svg {
+  color: var(--accent-primary);
+}
+
+.menu-item:active .menu-icon.menu-icon-svg {
+  color: var(--text-primary);
 }
