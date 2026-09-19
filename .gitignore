@@ -21,3 +21,6 @@ icons/icone-original.png
 *.pre-*
 *.orig
 *.rej
+
+# Página de debug (não publicar)
+debug-trial.html

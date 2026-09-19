@@ -227,6 +227,33 @@ async function boot() {
   await loadModule(initial);
 }
 
+// ═══════════════════════════════════════════════════════════
+// DEBUG: Forçar atualização (limpa cache + service worker)
+// ═══════════════════════════════════════════════════════════
+window.forcarAtualizacao = async function() {
+  try {
+    // Desregistra todos os Service Workers
+    if ('serviceWorker' in navigator) {
+      const registros = await navigator.serviceWorker.getRegistrations();
+      for (const reg of registros) {
+        await reg.unregister();
+      }
+    }
+    // Limpa todos os caches
+    if ('caches' in window) {
+      const nomes = await caches.keys();
+      for (const nome of nomes) {
+        await caches.delete(nome);
+      }
+    }
+    alert('Cache limpo! Recarregando...');
+    location.reload(true);
+  } catch (err) {
+    alert('Erro: ' + err.message);
+  }
+};
+console.log('💡 Digite forcarAtualizacao() no console para limpar cache');
+
 // Reagir a ativação (esconder tela, carregar módulo)
 window.addEventListener('casillas:activated', () => {
   const initial = appState.currentModule || 'trig';

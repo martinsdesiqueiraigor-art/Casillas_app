@@ -1,7 +1,7 @@
 // service-worker.js — Cache offline-first do Casillas App
 // Estratégia: cache-first para assets estáticos, network-first para navegação.
 
-const CACHE_VERSION = 'casillas-v1';
+const CACHE_VERSION = 'casillas-v4';
 const CACHE_ASSETS = [
   './',
   './index.html',

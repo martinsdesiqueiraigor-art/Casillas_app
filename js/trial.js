@@ -164,11 +164,43 @@ function showTrialBanner(daysLeft) {
   const msg = document.getElementById('trial-message');
   if (!banner || !msg) return;
 
-  if (daysLeft > 0 && daysLeft <= 7) {
-    msg.textContent = `Período de avaliação: ${daysLeft} dia(s) restante(s).`;
-    banner.classList.remove('hidden');
-  } else {
+  // Se o trial expirou, esconde o banner
+  if (daysLeft <= 0) {
     banner.classList.add('hidden');
+    return;
+  }
+
+  // Define cor e mensagem conforme urgência
+  let cor, texto;
+
+  if (daysLeft > 7) {
+    cor = 'success';
+    texto = `🎁 Versão gratuita — Teste: ${daysLeft} dias restantes`;
+  } else if (daysLeft > 3) {
+    cor = 'warning';
+    texto = `⏰ Teste: ${daysLeft} dias restantes`;
+  } else {
+    cor = 'danger';
+    texto = `⚠️ Últimos ${daysLeft} dias! Ative agora.`;
+  }
+
+  msg.textContent = texto;
+  banner.dataset.type = cor;
+  banner.classList.remove('hidden');
+
+  const cores = {
+    success: { bg: 'rgba(63, 185, 80, 0.14)', border: 'var(--success)' },
+    warning: { bg: 'rgba(210, 153, 34, 0.14)', border: 'var(--warning)' },
+    danger:  { bg: 'rgba(248, 81, 73, 0.14)',  border: 'var(--danger)' }
+  };
+  const c = cores[cor];
+  banner.style.background = c.bg;
+  banner.style.borderBottomColor = c.border;
+  msg.style.color = c.border;
+
+  const btnAtivar = document.getElementById('btn-banner-activate');
+  if (btnAtivar) {
+    btnAtivar.className = 'btn btn-sm ' + (cor === 'success' ? 'btn-outline' : 'btn-primary');
   }
 }
 
