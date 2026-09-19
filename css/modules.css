@@ -1,0 +1,226 @@
+/* modules.css — Estilos específicos por módulo */
+
+/* ---------- Trigonometria ---------- */
+.trig-svg-wrap {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: var(--sp-3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.trig-svg-wrap svg {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+}
+
+.trig-svg-wrap text {
+  fill: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.trig-svg-wrap .shape-line {
+  stroke: var(--accent-primary);
+  stroke-width: 2;
+  fill: none;
+}
+
+.trig-svg-wrap .shape-fill {
+  fill: rgba(88, 166, 255, 0.15);
+  stroke: none;
+}
+
+.trig-svg-wrap .shape-angle {
+  stroke: var(--accent-secondary);
+  stroke-width: 1.5;
+  fill: none;
+}
+
+/* ---------- Roscas ---------- */
+.rosca-tabs {
+  display: flex;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-3);
+  flex-wrap: wrap;
+}
+
+.rosca-tab {
+  padding: var(--sp-2) var(--sp-3);
+  font-size: var(--fs-sm);
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.rosca-tab.active {
+  background: var(--accent-primary);
+  color: #1a1108;
+  border-color: var(--accent-primary);
+  font-weight: 600;
+}
+
+/* ---------- Furos ---------- */
+.furos-svg-wrap {
+  display: flex;
+  justify-content: center;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: var(--sp-3);
+  margin-bottom: var(--sp-3);
+}
+
+.furos-svg-wrap svg {
+  max-width: 280px;
+  width: 100%;
+  height: auto;
+}
+
+.furos-svg-wrap circle.outer {
+  fill: none;
+  stroke: var(--border-color);
+  stroke-width: 1.5;
+}
+
+.furos-svg-wrap circle.inner {
+  fill: none;
+  stroke: var(--accent-secondary);
+  stroke-width: 1;
+  stroke-dasharray: 4 3;
+}
+
+.furos-svg-wrap circle.hole {
+  fill: var(--accent-primary);
+}
+
+.furos-svg-wrap text {
+  fill: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+/* ---------- Conicidade ---------- */
+.coni-diagram {
+  display: flex;
+  justify-content: center;
+  padding: var(--sp-2);
+}
+
+.coni-diagram svg {
+  max-width: 280px;
+  width: 100%;
+  height: auto;
+}
+
+.coni-diagram .trap {
+  fill: rgba(240, 136, 62, 0.15);
+  stroke: var(--accent-primary);
+  stroke-width: 2;
+}
+
+.coni-diagram text {
+  fill: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+/* ---------- Programação CNC ---------- */
+.prog-subtabs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-3);
+}
+
+.prog-subtab {
+  padding: var(--sp-2);
+  font-size: var(--fs-sm);
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.prog-subtab.active {
+  background: var(--accent-secondary);
+  color: #041b33;
+  border-color: var(--accent-secondary);
+  font-weight: 600;
+}
+
+/* ---------- Polígonos ---------- */
+.poly-svg-wrap {
+  display: flex;
+  justify-content: center;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: var(--sp-3);
+  margin-bottom: var(--sp-3);
+}
+
+.poly-svg-wrap svg {
+  max-width: 260px;
+  width: 100%;
+  height: auto;
+}
+
+.poly-svg-wrap .poly-shape {
+  fill: rgba(88, 166, 255, 0.12);
+  stroke: var(--accent-primary);
+  stroke-width: 2;
+}
+
+.poly-svg-wrap .poly-radius {
+  stroke: var(--accent-secondary);
+  stroke-width: 1;
+  stroke-dasharray: 4 3;
+}
+
+.poly-svg-wrap text {
+  fill: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+/* ---------- Chaveta ---------- */
+.chaveta-svg-wrap {
+  display: flex;
+  justify-content: center;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: var(--sp-3);
+  margin-bottom: var(--sp-3);
+}
+
+.chaveta-svg-wrap svg {
+  max-width: 300px;
+  width: 100%;
+  height: auto;
+}
+
+.chaveta-svg-wrap .shaft {
+  fill: none;
+  stroke: var(--border-color);
+  stroke-width: 2;
+}
+
+.chaveta-svg-wrap .key {
+  fill: rgba(240, 136, 62, 0.25);
+  stroke: var(--accent-primary);
+  stroke-width: 2;
+}
+
+.chaveta-svg-wrap text {
+  fill: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}

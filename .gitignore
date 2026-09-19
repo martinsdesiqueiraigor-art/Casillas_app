@@ -1,0 +1,7 @@
+*.bak
+*.tar.gz
+ativacao.mjs
+debug-device.html
+.DS_Store
+Thumbs.db
+icons/icone-original.png

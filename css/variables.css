@@ -1,0 +1,67 @@
+/* variables.css — Tokens de design do Casillas App */
+
+:root {
+  /* Fundos */
+  --bg-app: #0d1117;
+  --bg-card: #161b22;
+  --bg-input: #21262d;
+  --bg-elevated: #1c2128;
+
+  /* Texto */
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --text-muted: #6e7681;
+
+  /* Borda */
+  --border-color: #30363d;
+
+  /* Acentos */
+  --accent-primary: #f0883e;
+  --accent-secondary: #58a6ff;
+
+  /* Feedback */
+  --success: #3fb950;
+  --warning: #d29922;
+  --danger: #f85149;
+  --info: #58a6ff;
+
+  /* Tipografia */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+               "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+               "Liberation Mono", monospace;
+
+  --fs-xs: 11px;
+  --fs-sm: 13px;
+  --fs-md: 15px;
+  --fs-lg: 18px;
+  --fs-xl: 22px;
+  --fs-xxl: 28px;
+
+  /* Espaçamento */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+
+  /* Raio */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  /* Sombras */
+  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.35);
+  --shadow-strong: 0 8px 24px rgba(0, 0, 0, 0.55);
+
+  /* Layout */
+  --header-height: 60px;
+  --kpi-height: 60px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  /* Transições */
+  --t-fast: 120ms ease;
+  --t-mid: 220ms ease;
+}

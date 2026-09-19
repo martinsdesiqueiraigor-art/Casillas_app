@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#0d1117">
+  <meta name="description" content="Calculadora técnica de usinagem offline.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Casillas">
+  <title>Casillas App — Calculadora Técnica de Usinagem</title>
+
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./icons/icon-192.png">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+
+  <link rel="stylesheet" href="./css/reset.css">
+  <link rel="stylesheet" href="./css/variables.css">
+  <link rel="stylesheet" href="./css/layout.css">
+  <link rel="stylesheet" href="./css/components.css">
+  <link rel="stylesheet" href="./css/modules.css">
+</head>
+<body>
+
+  <!-- Banner de instalação PWA -->
+  <button id="btn-install" class="btn btn-outline hidden" type="button">
+    📲 Instalar App
+  </button>
+
+  <!-- Banner de trial -->
+  <div id="trial-banner" class="trial-banner hidden" role="status">
+    <span id="trial-message" class="trial-message"></span>
+    <button id="btn-banner-activate" class="btn btn-primary btn-sm" type="button">
+      Ativar
+    </button>
+  </div>
+
+  <!-- Cabeçalho -->
+  <header class="app-header" id="app-header">
+    <button id="open-menu-btn" class="icon-btn" type="button" aria-label="Abrir menu">
+      <span aria-hidden="true">☰</span>
+    </button>
+    <div class="header-main">
+      <h1 class="header-title">Casillas</h1>
+      <p id="header-subtitle" class="header-subtitle">Calculadora Técnica de Usinagem</p>
+    </div>
+    <div class="header-indicator">
+      <span id="module-indicator-icon" class="module-icon" aria-hidden="true">📐</span>
+      <span id="module-indicator-name" class="module-name">Trigonometria</span>
+    </div>
+  </header>
+
+  <!-- KPIs -->
+  <section class="kpi-strip" aria-label="Indicadores">
+    <div class="kpi-card">
+      <span id="kpi-1-label" class="kpi-label">—</span>
+      <span id="kpi-1-value" class="kpi-value">—</span>
+    </div>
+    <div class="kpi-card">
+      <span id="kpi-2-label" class="kpi-label">—</span>
+      <span id="kpi-2-value" class="kpi-value">—</span>
+    </div>
+    <div class="kpi-card">
+      <span id="kpi-3-label" class="kpi-label">—</span>
+      <span id="kpi-3-value" class="kpi-value">—</span>
+    </div>
+  </section>
+
+  <!-- Conteúdo dos módulos -->
+  <main id="app-content" class="app-content" aria-live="polite"></main>
+
+  <!-- Overlay do menu -->
+  <div id="menu-overlay" class="menu-overlay hidden" role="presentation"></div>
+
+  <!-- Menu lateral -->
+  <aside id="side-menu" class="side-menu" aria-hidden="true">
+    <div class="side-menu-header">
+      <h2 class="side-menu-title">Módulos</h2>
+      <button id="close-menu-btn" class="icon-btn" type="button" aria-label="Fechar menu">
+        <span aria-hidden="true">✕</span>
+      </button>
+    </div>
+    <nav class="side-menu-nav">
+      <ul id="menu-list" class="menu-list">
+        <li data-module="trig" class="menu-item">
+          <span class="menu-icon" aria-hidden="true">📐</span>
+          <span class="menu-label">Trigonometria</span>
+        </li>
+        <li data-module="coni" class="menu-item">
+          <span class="menu-icon" aria-hidden="true">📏</span>
+          <span class="menu-label">Conicidade</span>
+        </li>
+        <li data-module="poly" class="menu-item">
+          <span class="menu-icon" aria-hidden="true">⬡</span>
+          <span class="menu-label">Polígonos</span>
+        </li>
+        <li data-module="furos" class="menu-item">
+          <span class="menu-icon" aria-hidden="true">⚫</span>
+          <span class="menu-label">Furação Circular</span>
+        </li>
+        <li data-module="rosca" class="menu-item">
+          <span class="menu-icon" aria-hidden="true">🌀</span>
+          <span class="menu-label">Roscas</span>
+        </li>
+        <li data-module="tol" class="menu-item">
+          <span class="menu-icon" aria-hidden="true">📊</span>
+          <span class="menu-label">Tolerâncias ISO</span>
+        </li>
+        <li data-module="potencia" class="menu-item">
+          <span class="menu-icon" aria-hidden="true">⚡</span>
+          <span class="menu-label">Potência de Corte</span>
+        </li>
+        <li data-module="chaveta" class="menu-item">
+          <span class="menu-icon" aria-hidden="true">🔧</span>
+          <span class="menu-label">Chaveta DIN 6885</span>
+        </li>
+        <li data-module="conicpad" class="menu-item">
+          <span class="menu-icon" aria-hidden="true">🎯</span>
+          <span class="menu-label">Conicidades Padrão</span>
+        </li>
+        <li data-module="prog" class="menu-item">
+          <span class="menu-icon" aria-hidden="true">🖥️</span>
+          <span class="menu-label">Programação CNC</span>
+        </li>
+        <li data-module="consult" class="menu-item">
+          <span class="menu-icon" aria-hidden="true">💬</span>
+          <span class="menu-label">Consultoria</span>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Teclado numérico custom -->
+  <div id="custom-keyboard" class="custom-keyboard hidden" aria-hidden="true"></div>
+
+  <!-- Toast -->
+  <div id="toast-container" class="toast-container hidden" role="alert">
+    <span id="toast-icon" class="toast-icon" aria-hidden="true">ℹ️</span>
+    <span id="toast-message" class="toast-message"></span>
+  </div>
+
+  <!-- Tela de ativação -->
+  <div id="activation-screen" class="activation-screen hidden">
+    <div class="activation-card">
+      <h2 class="activation-title">Ativação</h2>
+      <p class="activation-sub">
+        Seu período de avaliação terminou. Cole o código de ativação para
+        continuar usando o Casillas App.
+      </p>
+      <div class="input-group">
+        <input id="activation-code" class="input" type="text"
+               placeholder="XXXX-XXXX-XXXX-XXXX" autocomplete="off"
+               spellcheck="false" maxlength="19">
+      </div>
+      <button id="btn-submit-activation" class="btn btn-primary" type="button">
+        Ativar
+      </button>
+      <button id="btn-buy-license" class="btn btn-outline" type="button">
+        Comprar licença via WhatsApp
+      </button>
+    </div>
+  </div>
+
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>

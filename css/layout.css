@@ -1,0 +1,217 @@
+/* layout.css — Estrutura principal (header, kpi, conteúdo, menu) */
+
+html,
+body {
+  background: var(--bg-app);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--fs-md);
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  padding-top: calc(var(--safe-top) + var(--header-height) + var(--kpi-height));
+  padding-bottom: var(--safe-bottom);
+}
+
+/* ---------- Header ---------- */
+.app-header {
+  position: fixed;
+  top: var(--safe-top);
+  left: 0;
+  right: 0;
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: 0 var(--sp-4);
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+  z-index: 100;
+}
+
+.header-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.header-title {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--accent-primary);
+  letter-spacing: 0.5px;
+  line-height: 1;
+}
+
+.header-subtitle {
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  max-width: 110px;
+}
+
+.module-icon {
+  font-size: var(--fs-lg);
+  line-height: 1;
+}
+
+.module-name {
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* ---------- KPIs ---------- */
+.kpi-strip {
+  position: fixed;
+  top: calc(var(--safe-top) + var(--header-height));
+  left: 0;
+  right: 0;
+  height: var(--kpi-height);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  z-index: 99;
+}
+
+/* ---------- Conteúdo ---------- */
+.app-content {
+  flex: 1;
+  padding: var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  overflow-x: hidden;
+}
+
+/* ---------- Menu lateral ---------- */
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 200;
+  opacity: 1;
+  transition: opacity var(--t-mid);
+}
+
+.menu-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 260px;
+  max-width: 82vw;
+  background: var(--bg-elevated);
+  border-right: 1px solid var(--border-color);
+  transform: translateX(-100%);
+  transition: transform var(--t-mid);
+  z-index: 210;
+  display: flex;
+  flex-direction: column;
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom);
+  overflow-y: auto;
+}
+
+.side-menu.open {
+  transform: translateX(0);
+}
+
+.side-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-4);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.side-menu-title {
+  font-size: var(--fs-md);
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.side-menu-nav {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.menu-list {
+  display: flex;
+  flex-direction: column;
+  padding: var(--sp-2) 0;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  color: var(--text-primary);
+  font-size: var(--fs-md);
+  transition: background var(--t-fast), color var(--t-fast);
+  cursor: pointer;
+}
+
+.menu-item:active {
+  background: var(--bg-input);
+}
+
+.menu-item.active {
+  background: var(--bg-input);
+  border-left: 3px solid var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+.menu-icon {
+  font-size: var(--fs-lg);
+  width: 24px;
+  text-align: center;
+}
+
+.menu-label {
+  font-weight: 500;
+}
+
+/* ---------- Botão instalar ---------- */
+#btn-install {
+  position: fixed;
+  left: var(--sp-3);
+  bottom: calc(var(--safe-bottom) + var(--sp-3));
+  z-index: 150;
+  box-shadow: var(--shadow-strong);
+}
+
+@media (min-width: 720px) {
+  .app-content {
+    max-width: 720px;
+    margin: 0 auto;
+    width: 100%;
+  }
+}
