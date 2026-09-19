@@ -48,7 +48,21 @@
       <span id="module-indicator-icon" class="module-icon" aria-hidden="true">📐</span>
       <span id="module-indicator-name" class="module-name">Trigonometria</span>
     </div>
+    <button id="open-options-btn" class="icon-btn" type="button" aria-label="Opções">
+      <span aria-hidden="true">⋮</span>
+    </button>
   </header>
+
+  <div id="options-menu" class="options-menu hidden" role="menu">
+    <button class="options-item" id="opt-keyboard" type="button" role="menuitem">
+      <span class="options-icon" aria-hidden="true">⌨️</span>
+      <span>Ativar teclado</span>
+    </button>
+    <button class="options-item" id="opt-clear" type="button" role="menuitem">
+      <span class="options-icon" aria-hidden="true">🗑️</span>
+      <span>Zerar campos</span>
+    </button>
+  </div>
 
   <!-- KPIs -->
   <section class="kpi-strip" aria-label="Indicadores">

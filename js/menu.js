@@ -74,3 +74,46 @@ export function setActiveMenuItem(moduleKey) {
     else li.classList.remove('active');
   });
 }
+
+// ═══════════════════════════════════════════════════════════
+// DROPDOWN DE OPÇÕES DO CABEÇALHO (⋮)
+// ═══════════════════════════════════════════════════════════
+
+let optionsMenuEl = null;
+let optionsBtnEl = null;
+
+export function initOptionsMenu() {
+  optionsMenuEl = document.getElementById('options-menu');
+  optionsBtnEl = document.getElementById('open-options-btn');
+
+  if (!optionsMenuEl || !optionsBtnEl) return;
+  if (optionsBtnEl.dataset.wired === '1') return;
+  optionsBtnEl.dataset.wired = '1';
+
+  optionsBtnEl.addEventListener('click', (ev) => {
+    ev.stopPropagation();
+    const isHidden = optionsMenuEl.classList.contains('hidden');
+    if (isHidden) {
+      optionsMenuEl.classList.remove('hidden');
+    } else {
+      optionsMenuEl.classList.add('hidden');
+    }
+  });
+
+  document.addEventListener('click', (ev) => {
+    if (optionsMenuEl.classList.contains('hidden')) return;
+    if (optionsMenuEl.contains(ev.target)) return;
+    if (optionsBtnEl.contains(ev.target)) return;
+    optionsMenuEl.classList.add('hidden');
+  });
+
+  document.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Escape') {
+      optionsMenuEl.classList.add('hidden');
+    }
+  });
+}
+
+export function closeOptionsMenu() {
+  if (optionsMenuEl) optionsMenuEl.classList.add('hidden');
+}

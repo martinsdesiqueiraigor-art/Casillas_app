@@ -174,10 +174,11 @@ export function render(container) {
       fieldsWrap.appendChild(inputGroup('Profundidade por passe (mm)', 'g-ap', '1.5'));
     } else if (currentSub === 'canal') {
       fieldsWrap.appendChild(inputGroup('Diâmetro externo (mm)', 'g-de', '40'));
+      fieldsWrap.appendChild(inputGroup('Diâmetro do canal (mm)', 'g-dc', '36'));
       fieldsWrap.appendChild(inputGroup('Largura da ferramenta (mm)', 'g-lf', '3'));
-      fieldsWrap.appendChild(inputGroup('Largura do canal (mm)', 'g-lc', '3'));
-      fieldsWrap.appendChild(inputGroup('Profundidade do canal (mm)', 'g-pc', '2'));
-      fieldsWrap.appendChild(inputGroup('Posição Z inicial (mm)', 'g-z', '0'));
+      fieldsWrap.appendChild(inputGroup('Largura do canal (mm)', 'g-lc', '5'));
+      fieldsWrap.appendChild(inputGroup('Z de início do canal (mm)', 'g-z', '0'));
+      fieldsWrap.appendChild(inputGroup('Passo lateral Q (mm)', 'g-ql', '2.1'));
       fieldsWrap.appendChild(inputGroup('Rotação S (rpm)', 'g-rpm', '600'));
       fieldsWrap.appendChild(inputGroup('Avanço F (mm/rev)', 'g-fz', '0.08'));
     } else if (currentSub === 'rmult') {
@@ -190,7 +191,11 @@ export function render(container) {
     } else if (currentSub === 'macro') {
       fieldsWrap.appendChild(inputGroup('Diâmetro do círculo (mm)', 'g-D', '80'));
       fieldsWrap.appendChild(inputGroup('Número de furos', 'g-n', '6'));
+      fieldsWrap.appendChild(inputGroup('Ângulo inicial (°)', 'g-ai', '0'));
       fieldsWrap.appendChild(inputGroup('Profundidade (mm)', 'g-prof', '15'));
+      fieldsWrap.appendChild(inputGroup('Plano Z seguro (mm)', 'g-zs', '50'));
+      fieldsWrap.appendChild(inputGroup('Q - Pique (mm)', 'g-qp', '5'));
+      fieldsWrap.appendChild(inputGroup('R - Retorno (mm)', 'g-rr', '2'));
       fieldsWrap.appendChild(inputGroup('Rotação S (rpm)', 'g-rpm', '900'));
       fieldsWrap.appendChild(inputGroup('Avanço F (mm/min)', 'g-fz', '0.1'));
     }
@@ -231,16 +236,18 @@ export function render(container) {
         });
       } else if (currentSub === 'canal') {
         const de = getVal('g-de') || 40;
+        const dc = getVal('g-dc') || 36;
         const lf = getVal('g-lf') || 3;
-        const lc = getVal('g-lc') || 3;
-        const pc = getVal('g-pc') || 2;
+        const lc = getVal('g-lc') || 5;
         const z = getVal('g-z') || 0;
+        const q = getVal('g-ql');
         const rpm = getVal('g-rpm') || 600;
         const fz = getVal('g-fz') || 0.08;
         texto = gcodeCanal({
-          diametroExterno: de, larguraFerramenta: lf,
-          larguraCanal: lc, profundidadeCanal: pc,
-          zInicio: z, rpm: Math.round(rpm), avanco: fz
+          diametroExterno: de, diametroCanal: dc,
+          larguraFerramenta: lf, larguraCanal: lc,
+          zInicio: z, passoLateral: Number.isFinite(q) ? q : null,
+          rpm: Math.round(rpm), avanco: fz
         });
       } else if (currentSub === 'rmult') {
         const passo = getVal('g-passo') || 2;
@@ -257,12 +264,17 @@ export function render(container) {
       } else if (currentSub === 'macro') {
         const D = getVal('g-D') || 80;
         const n = getVal('g-n') || 6;
+        const ai = getVal('g-ai') || 0;
         const prof = getVal('g-prof') || 15;
+        const zs = getVal('g-zs') || 50;
+        const q = getVal('g-qp') || 5;
+        const r = getVal('g-rr') || 2;
         const rpm = getVal('g-rpm') || 900;
         const fz = getVal('g-fz') || 0.1;
         texto = macroFuros({
-          D, n: Math.round(n), profundidade: prof,
-          rpm: Math.round(rpm), avanco: fz
+          D, n: Math.round(n), anguloInicial: ai,
+          profundidade: prof, zSeguro: zs,
+          q, r, rpm: Math.round(rpm), avanco: fz
         });
       }
     } catch (err) {

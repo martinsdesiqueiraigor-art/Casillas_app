@@ -29,7 +29,7 @@ export function rodape() {
 }
 
 // Furação circular (G83 com ciclo de pica-pau)
-export function gcodeFurosCirculares({ numeroPrograma = 'O0010', nomePeca = 'FURAÇÃO',
+export function gcodeFurosCirculares({ numeroPrograma = 'O0010', nomePeca = 'FURACAO',
                                         D = 100, n = 6, anguloInicial = 0,
                                         profundidade = 20, peck = 5,
                                         fz = 0.1, rpm = 800,
@@ -38,30 +38,51 @@ export function gcodeFurosCirculares({ numeroPrograma = 'O0010', nomePeca = 'FUR
   if (!Number.isInteger(n) || n < 2) return '';
 
   const R = D / 2;
-  const passo = 360 / n;
+  const passoAngular = 360 / n;
   const linhas = [];
+  const zFinal = zReferencia - profundidade;
 
   linhas.push(cabecalho(numeroPrograma, nomePeca));
-  linhas.push(`(FURACAO CIRCULAR D=${fmt(D)} N=${n})`);
-  linhas.push(`(DIAMETRO CIRCULO=${fmt(D)})`);
-  linhas.push(`(RAIO=${fmt(R)})`);
+  linhas.push(`(FURACAO CIRCULAR - CICLO G83 MODAL)`);
+  linhas.push(`(Diametro circulo: ${fmt(D)} mm | Numero de furos: ${n})`);
+  linhas.push(`(Angulo inicial: ${fmt(anguloInicial, 1)} graus | Passo: ${fmt(passoAngular, 3)} graus)`);
+  linhas.push(`(Profundidade: ${fmt(profundidade)} mm | Peck: ${fmt(peck)} mm)`);
   linhas.push(`G97 S${Math.round(rpm)} M03`);
   linhas.push(`G00 Z${fmt(zSeguro)}`);
 
+  // Calcula coordenadas de todos os furos
+  const furos = [];
   for (let i = 0; i < n; i++) {
-    const ang = (anguloInicial + i * passo) * Math.PI / 180;
-    const x = R * Math.cos(ang);
-    const y = R * Math.sin(ang);
-    linhas.push(`(FURO ${i + 1} - ANG ${fmt(anguloInicial + i * passo, 1)} GRAUS)`);
-    linhas.push(`G00 X${fmt(x)} Y${fmt(y)}`);
-    linhas.push(`G00 Z${fmt(zSeguro)}`);
-    if (peck > 0) {
-      linhas.push(`G83 Z${fmt(zReferencia - profundidade)} R${fmt(zSeguro)} Q${fmt(peck)} F${fmt(fz)}`);
-    } else {
-      linhas.push(`G81 Z${fmt(zReferencia - profundidade)} R${fmt(zSeguro)} F${fmt(fz)}`);
-    }
-    linhas.push(`G80`);
+    const angGraus = anguloInicial + i * passoAngular;
+    const angRad = angGraus * Math.PI / 180;
+    furos.push({
+      i: i + 1,
+      angGraus: angGraus,
+      x: R * Math.cos(angRad),
+      y: R * Math.sin(angRad)
+    });
   }
+
+  // Primeiro furo: ativa o ciclo G83
+  const f0 = furos[0];
+  linhas.push(`(FURO 1 - ANG ${fmt(f0.angGraus, 1)} GRAUS)`);
+  linhas.push(`G00 X${fmt(f0.x)} Y${fmt(f0.y)}`);
+  if (peck > 0) {
+    linhas.push(`G83 Z${fmt(zFinal)} R${fmt(zSeguro)} Q${fmt(peck)} F${fmt(fz)}`);
+  } else {
+    linhas.push(`G81 Z${fmt(zFinal)} R${fmt(zSeguro)} F${fmt(fz)}`);
+  }
+
+  // Demais furos: só posiciona (ciclo continua ativo)
+  for (let i = 1; i < furos.length; i++) {
+    const f = furos[i];
+    linhas.push(`(FURO ${f.i} - ANG ${fmt(f.angGraus, 1)} GRAUS)`);
+    linhas.push(`G00 X${fmt(f.x)} Y${fmt(f.y)}`);
+  }
+
+  // Cancela o ciclo
+  linhas.push(`G80`);
+  linhas.push(`G00 Z${fmt(zSeguro)}`);
 
   linhas.push(rodape());
   return linhas.join('\n');
@@ -111,19 +132,39 @@ export function gcodeDesbaste({ numeroPrograma = 'O0030', nomePeca = 'DESBASTE',
 
 // Canal (Grooving) — G75
 export function gcodeCanal({ numeroPrograma = 'O0040', nomePeca = 'CANAL',
-                             diametroExterno = 40, larguraFerramenta = 3,
-                             larguraCanal = 3, profundidadeCanal = 2,
-                             zInicio = 0, rpm = 600, avanco = 0.08 } = {}) {
+                             diametroExterno = 40, diametroCanal = 36,
+                             larguraFerramenta = 3, larguraCanal = 5,
+                             zInicio = 0, passoLateral = null,
+                             rpm = 600, avanco = 0.08 } = {}) {
+  if (!Number.isFinite(diametroExterno) || diametroExterno <= 0) return '';
+  if (!Number.isFinite(diametroCanal) || diametroCanal <= 0) return '';
+  if (diametroCanal >= diametroExterno) return '';
+
   const linhas = [];
-  const xInicial = diametroExterno;
-  const xFinal = diametroExterno - 2 * profundidadeCanal;
+  const profundidadeReal = (diametroExterno - diametroCanal) / 2;
+  const zInicial = zInicio - larguraFerramenta;
+  const zFinal = larguraCanal > larguraFerramenta
+    ? zInicial - (larguraCanal - larguraFerramenta)
+    : zInicial;
+  const q = passoLateral !== null && Number.isFinite(passoLateral) && passoLateral > 0
+    ? passoLateral
+    : larguraFerramenta * 0.7;
+  const numPasses = larguraCanal > larguraFerramenta
+    ? Math.ceil((larguraCanal - larguraFerramenta) / q)
+    : 1;
 
   linhas.push(cabecalho(numeroPrograma, nomePeca));
-  linhas.push(`(CANAL EXTERNO G75)`);
+  linhas.push(`(CANAL EXTERNO - G75)`);
+  linhas.push(`(Diametro externo: ${fmt(diametroExterno)} mm | Diametro canal: ${fmt(diametroCanal)} mm)`);
+  linhas.push(`(Profundidade: ${fmt(profundidadeReal)} mm | Largura canal: ${fmt(larguraCanal)} mm)`);
+  linhas.push(`(Bedame: ${fmt(larguraFerramenta)} mm | Passo lateral Q: ${fmt(q)} mm)`);
+  linhas.push(`(Z inicial do canal: ${fmt(zInicio)} mm | Z inicial aprox: ${fmt(zInicial)} mm | Z final: ${fmt(zFinal)} mm)`);
+  linhas.push(`(Numero de passes laterais estimados: ${numPasses})`);
   linhas.push(`G97 S${Math.round(rpm)} M03`);
-  linhas.push(`G00 X${fmt(xInicial + 2)} Z${fmt(zInicio + 2)}`);
+  linhas.push(`G00 X${fmt(diametroExterno + 2)} Z${fmt(zInicial)}`);
   linhas.push(`G75 R0.3`);
-  linhas.push(`G75 X${fmt(xFinal)} Z${fmt(-zInicio)} P2000 Q${Math.round(larguraFerramenta * 1000)} F${fmt(avanco)}`);
+  linhas.push(`G75 X${fmt(diametroCanal)} Z${fmt(zFinal)} P2000 Q${Math.round(q * 1000)} F${fmt(avanco)}`);
+  linhas.push(`G00 X${fmt(diametroExterno + 2)}`);
   linhas.push(rodape());
   return linhas.join('\n');
 }
@@ -154,27 +195,36 @@ export function gcodeRoscaMultipla({ numeroPrograma = 'O0050', nomePeca = 'ROSCA
 
 // Macro B — chamada paramétrica de furação
 export function macroFuros({ numeroPrograma = 'O0100', nomePeca = 'MACRO FUROS',
-                             D = 80, n = 6, profundidade = 15,
+                             D = 80, n = 6, anguloInicial = 0,
+                             profundidade = 15, zSeguro = 50,
+                             q = 5, r = 2,
                              rpm = 900, avanco = 0.1 } = {}) {
+  if (!Number.isFinite(D) || D <= 0) return '';
+  if (!Number.isInteger(n) || n < 2) return '';
+
   const linhas = [];
   linhas.push(cabecalho(numeroPrograma, nomePeca));
-  linhas.push(`(MACRO B — FURACAO CIRCULAR)`);
-  linhas.push(`(USO: G65 P9010 D${fmt(D)} N${n} Z${fmt(profundidade)})`);
+  linhas.push(`(MACRO B - FURACAO CIRCULAR)`);
+  linhas.push(`(Diametro: ${fmt(D)} mm | Numero furos: ${n} | Angulo inicial: ${fmt(anguloInicial, 1)} graus)`);
+  linhas.push(`(Profundidade: ${fmt(profundidade)} mm | Q: ${fmt(q)} mm | R: ${fmt(r)} mm | Z seguro: ${fmt(zSeguro)} mm)`);
   linhas.push(`G97 S${Math.round(rpm)} M03`);
+  linhas.push(`G00 Z${fmt(zSeguro)}`);
   linhas.push(`#100 = ${fmt(D / 2)}   (RAIO)`);
   linhas.push(`#101 = ${n}   (NUMERO DE FUROS)`);
   linhas.push(`#102 = ${fmt(profundidade)}   (PROFUNDIDADE)`);
   linhas.push(`#103 = 360 / #101   (PASSO ANGULAR)`);
-  linhas.push(`#104 = 0   (CONTADOR)`);
-  linhas.push(`WHILE [#104 LT #101] DO 1`);
-  linhas.push(`  #110 = #104 * #103`);
-  linhas.push(`  #111 = #100 * COS[#110]`);
-  linhas.push(`  #112 = #100 * SIN[#110]`);
+  linhas.push(`#104 = ${fmt(anguloInicial, 1)}   (ANGULO INICIAL)`);
+  linhas.push(`#105 = 0   (CONTADOR)`);
+  linhas.push(`WHILE [#105 LT #101] DO 1`);
+  linhas.push(`  #110 = #104 + #105 * #103   (ANGULO ATUAL)`);
+  linhas.push(`  #111 = #100 * COS[#110]     (X)`);
+  linhas.push(`  #112 = #100 * SIN[#110]     (Y)`);
   linhas.push(`  G00 X#111 Y#112`);
-  linhas.push(`  G81 Z-#102 R2 F${fmt(avanco)}`);
+  linhas.push(`  G83 Z-#102 R${fmt(r)} Q${fmt(q)} F${fmt(avanco)}`);
   linhas.push(`  G80`);
-  linhas.push(`  #104 = #104 + 1`);
+  linhas.push(`  #105 = #105 + 1`);
   linhas.push(`END 1`);
+  linhas.push(`G00 Z${fmt(zSeguro)}`);
   linhas.push(rodape());
   return linhas.join('\n');
 }

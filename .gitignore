@@ -12,3 +12,12 @@ icons/icone-original.png
 *.pre-hashes
 *.pre-*
 *.bak
+
+# Backups internos (patches)
+*.bak
+*.bak-*
+*.bak-pre-*
+*_bak_*
+*.pre-*
+*.orig
+*.rej

@@ -485,3 +485,197 @@
   color: var(--text-secondary);
   line-height: 1.4;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   TELA DE PAYWALL — Módulo bloqueado (versão gratuita)
+   ═══════════════════════════════════════════════════════════ */
+.paywall-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px;
+}
+
+.paywall-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 28px 24px;
+  max-width: 420px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.paywall-icon {
+  font-size: 64px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.paywall-title {
+  font-size: 22px;
+  color: var(--accent-primary);
+  font-weight: 700;
+  margin: 0;
+}
+
+.paywall-subtitle {
+  font-size: 15px;
+  color: var(--text-primary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.paywall-message {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.paywall-lista {
+  list-style: none;
+  padding: 12px 16px;
+  margin: 0;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  text-align: left;
+  font-size: 13px;
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.paywall-lista li {
+  padding: 2px 0;
+}
+
+.paywall-preco {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--success);
+  padding: 10px;
+  background: rgba(63, 185, 80, 0.1);
+  border: 1px solid var(--success);
+  border-radius: 8px;
+  margin: 4px 0;
+}
+
+.options-menu {
+  position: fixed;
+  top: calc(var(--safe-top) + var(--header-height) - 4px);
+  right: var(--sp-3);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-strong);
+  z-index: 250;
+  min-width: 200px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.options-menu.hidden {
+  display: none;
+}
+
+.options-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: transparent;
+  color: var(--text-primary);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+  font-family: var(--font-sans);
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+}
+
+.options-item:active {
+  background: var(--bg-input);
+}
+
+.options-icon {
+  font-size: var(--fs-md);
+  width: 20px;
+  text-align: center;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TECLADO NUMÉRICO CUSTOMIZADO
+   ═══════════════════════════════════════════════════════════ */
+.custom-keyboard {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-elevated);
+  border-top: 2px solid var(--accent-primary);
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.5);
+  z-index: 400;
+  padding: 8px;
+  padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+}
+
+.custom-keyboard.hidden {
+  display: none;
+}
+
+.kbd-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.kbd-key {
+  background: var(--bg-input);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 14px 8px;
+  font-size: 20px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--t-fast), transform var(--t-fast);
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 48px;
+}
+
+.kbd-key:active {
+  background: var(--accent-primary);
+  color: #1a1108;
+  transform: scale(0.95);
+}
+
+.kbd-key.kbd-action {
+  background: var(--accent-primary);
+  color: #1a1108;
+  font-weight: 700;
+}
+
+.kbd-key.kbd-action:active {
+  background: var(--accent-secondary);
+  color: #fff;
+}
+
+body.kbd-open .app-content {
+  padding-bottom: 280px;
+}

@@ -5,7 +5,7 @@ import { showToast } from './utils.js';
 import { loadInitialState, persistCurrentModule, appState } from './state.js';
 import { checkTrialStatus } from './trial.js';
 import { initKeyboard, bindInputsToKeyboard, hideKeyboard } from './keyboard.js';
-import { initMenu, setActiveMenuItem } from './menu.js';
+import { initMenu, setActiveMenuItem, initOptionsMenu, closeOptionsMenu } from './menu.js';
 
 // Registro dos módulos (carregamento dinâmico)
 const MODULE_LOADERS = {
@@ -64,6 +64,13 @@ async function loadModule(key) {
 
     mod.render(content);
     bindInputsToKeyboard(content);
+
+    // Re-vincula após o módulo renderizar campos dinamicamente.
+    // Isso resolve o bug do teclado não abrir na primeira interação.
+    setTimeout(() => {
+      bindInputsToKeyboard(content);
+    }, 100);
+
     setActiveMenuItem(key);
     appState.currentModule = key;
     await persistCurrentModule(key);
@@ -112,6 +119,87 @@ function registerServiceWorker() {
   });
 }
 
+
+// ═══════════════════════════════════════════════════════════
+// MENU DE OPÇÕES (⌨️ Ativar teclado / 🗑️ Zerar campos)
+// ═══════════════════════════════════════════════════════════
+
+function wireOptionsButtons() {
+  const optKeyboard = document.getElementById('opt-keyboard');
+  const optClear = document.getElementById('opt-clear');
+
+  if (optKeyboard && optKeyboard.dataset.wired !== '1') {
+    optKeyboard.dataset.wired = '1';
+    optKeyboard.addEventListener('click', async (ev) => {
+      // Previne que o clique feche o menu antes da hora
+      ev.preventDefault();
+      ev.stopPropagation();
+
+      // Fecha o dropdown PRIMEIRO
+      closeOptionsMenu();
+
+      // Espera o dropdown fechar completamente
+      setTimeout(async () => {
+        const content = document.getElementById('app-content');
+        if (!content) return;
+
+        // Importa dinamicamente
+        const kb = await import('./keyboard.js');
+
+        // 1) Garante que o teclado está inicializado
+        kb.initKeyboard();
+
+        // 2) Aplica inputmode="none" em todos os inputs
+        const inputs = content.querySelectorAll('input, textarea');
+        inputs.forEach((inp) => {
+          inp.setAttribute('inputmode', 'none');
+          inp.dataset.kbdBound = '1';
+        });
+
+        // 3) Vincula o container
+        kb.bindInputsToKeyboard(content);
+
+        // 4) Encontra o primeiro input visível
+        let alvo = null;
+        for (const input of inputs) {
+          if (input.offsetParent !== null) { alvo = input; break; }
+        }
+
+        // 5) Abre o teclado forçadamente (com delay extra)
+        if (alvo) {
+          alvo.setAttribute('inputmode', 'none');
+          alvo.focus();
+          kb.showKeyboard(alvo);
+          showToast('Teclado ativado!', 'success');
+        } else {
+          showToast('Nenhum campo encontrado.', 'warning');
+        }
+      }, 150); // delay para o dropdown fechar
+    });
+  }
+
+  if (optClear && optClear.dataset.wired !== '1') {
+    optClear.dataset.wired = '1';
+    optClear.addEventListener('click', () => {
+      closeOptionsMenu();
+      const content = document.getElementById('app-content');
+      if (!content) return;
+
+      const inputs = content.querySelectorAll('input, textarea');
+      let count = 0;
+      inputs.forEach((input) => {
+        if (input.value !== '') {
+          input.value = '';
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+          count++;
+        }
+      });
+
+      showToast(`${count} campo(s) zerado(s).`, 'success');
+    });
+  }
+}
+
 async function boot() {
   try {
     await initDB();
@@ -125,6 +213,8 @@ async function boot() {
 
   await loadInitialState();
   initMenu(loadModule);
+  initOptionsMenu();
+  wireOptionsButtons();
 
   // Verifica trial ANTES de mostrar o app
   const trial = await checkTrialStatus();

@@ -2,7 +2,7 @@
 
 import {
   PASSOS_METRICA, PASSOS_UNC, PASSOS_UNF, PASSOS_BSW,
-  calcularMetrica, calcularPolegada, medidaSobre3Rolos
+  calcularMetrica, calcularPolegada, medidaSobre3Rolos, faixaRolo
 } from '../calc/rosca.js';
 import { formatNumber, parseInput, createElementSafe, showToast } from '../utils.js';
 import { updateKPIs, updateHeader } from '../state.js';
@@ -127,6 +127,16 @@ export function render(container) {
 
   container.appendChild(card);
 
+  // Delegação global: qualquer input dentro do fieldsWrap dispara a atualização
+  if (fieldsWrap && fieldsWrap.dataset.dicaWired !== '1') {
+    fieldsWrap.dataset.dicaWired = '1';
+    fieldsWrap.addEventListener('input', (ev) => {
+      if (ev.target && ev.target.id === 'rosca-rolo') {
+        atualizarDicaAtual();
+      }
+    });
+  }
+
   function optionsFrom(table) {
     return Object.keys(table).map((k) => ({ value: k, label: k }));
   }
@@ -142,8 +152,9 @@ export function render(container) {
       fieldsWrap.appendChild(selectGroup('Rosca métrica', 'rosca-sel', opts));
       const sel = fieldsWrap.querySelector('#rosca-sel');
       if (sel) sel.value = metricaSel;
-      if (sel) sel.addEventListener('change', () => { metricaSel = sel.value; });
+      if (sel) sel.addEventListener('change', () => { metricaSel = sel.value; atualizarDicaAtual(); });
       fieldsWrap.appendChild(inputGroup('Diâmetro do rolo (mm) — opcional', 'rosca-rolo'));
+      // Listener global é adicionado no init
     } else if (currentTab === 'unc' || currentTab === 'unf' || currentTab === 'bsw') {
       const table = currentTab === 'unc' ? PASSOS_UNC : (currentTab === 'unf' ? PASSOS_UNF : PASSOS_BSW);
       const opts = Object.keys(table).map((k) => ({
@@ -153,10 +164,114 @@ export function render(container) {
       fieldsWrap.appendChild(selectGroup('Rosca em polegada', 'rosca-sel', opts));
       const sel = fieldsWrap.querySelector('#rosca-sel');
       if (sel && table[polSel]) sel.value = polSel;
-      if (sel) sel.addEventListener('change', () => { polSel = sel.value; });
+      if (sel) sel.addEventListener('change', () => { polSel = sel.value; atualizarDicaAtual(); });
       fieldsWrap.appendChild(inputGroup('Diâmetro do rolo (mm) — opcional', 'rosca-rolo'));
+      // Listener global é adicionado no init
     }
   }
+
+
+// Renderiza a dica de faixa do rolo abaixo do campo
+
+// Atualiza a dica do rolo com base no estado atual
+function atualizarDicaAtual() {
+  const input = document.getElementById('rosca-rolo');
+  if (!input) return;
+
+  if (currentTab === 'metrica') {
+    const spec = PASSOS_METRICA[metricaSel];
+    if (spec) atualizarDicaFaixa(spec.passo, 'metrica', 'rosca-rolo');
+  } else {
+    const table = currentTab === 'unc' ? PASSOS_UNC : (currentTab === 'unf' ? PASSOS_UNF : PASSOS_BSW);
+    const spec = table[polSel];
+    if (spec) {
+      const passoMM = 25.4 / spec.tpi;
+      atualizarDicaFaixa(passoMM, tipoRoscaParaFaixa(currentTab), 'rosca-rolo');
+    }
+  }
+}
+
+// Delegação global: qualquer input dentro de fieldsWrap dispara a atualização
+function atualizarDicaFaixa(passo, tipo, idCampo) {
+  const input = document.getElementById(idCampo);
+  if (!input) {
+    console.log('[DICA] Input não encontrado:', idCampo);
+    return;
+  }
+
+  // Busca o wrapper de forma robusta
+  let wrapper = input.closest('.input-group');
+  if (!wrapper) {
+    // Fallback: sobe 2 níveis
+    wrapper = input.parentElement ? input.parentElement.parentElement : null;
+  }
+  if (!wrapper) return;
+
+  // Remove dica anterior
+  const anterior = wrapper.querySelector('.faixa-rolo-dica');
+  if (anterior) anterior.remove();
+
+  const faixa = faixaRolo(passo, tipo);
+  if (!faixa) return;
+
+  const dw = parseFloat(String(input.value).replace(',', '.'));
+  const status = faixa.classificar(dw);
+
+  const dica = document.createElement('div');
+  dica.className = 'faixa-rolo-dica';
+  dica.style.cssText = 'font-size: 11px; margin-top: 6px; line-height: 1.4; padding: 6px 8px; border-radius: 4px;';
+
+  const idealTxt = `Ideal: ${faixa.ideal.toFixed(3)} mm`;
+  const rangeTxt = `Faixa: ${faixa.min.toFixed(3)} a ${faixa.max.toFixed(3)} mm`;
+
+  let corBg = 'rgba(88, 166, 255, 0.1)';
+  let corTxt = '#58a6ff';
+  let icone = '💡';
+  let extra = '';
+
+  if (status === 'ideal') {
+    corBg = 'rgba(63, 185, 80, 0.15)';
+    corTxt = '#3fb950';
+    icone = '✅';
+    extra = '<br>Rolo dentro da faixa ideal.';
+  } else if (status === 'aviso') {
+    corBg = 'rgba(210, 153, 34, 0.15)';
+    corTxt = '#d29922';
+    icone = '⚠️';
+    extra = '<br>Rolo fora da faixa ideal. Pode ter erro de ±0.02 mm.';
+  } else if (status === 'invalido') {
+    corBg = 'rgba(248, 81, 73, 0.15)';
+    corTxt = '#f85149';
+    icone = '❌';
+    extra = '<br>Rolo MUITO fora da faixa. Resultado provavelmente incorreto.';
+  }
+
+  dica.style.background = corBg;
+  dica.style.color = corTxt;
+  dica.style.border = `1px solid ${corTxt}`;
+  dica.innerHTML = `${icone} ${idealTxt} | ${rangeTxt}${extra}`;
+
+  wrapper.appendChild(dica);
+
+  if (status === 'ideal') {
+    input.style.borderColor = '#3fb950';
+  } else if (status === 'aviso') {
+    input.style.borderColor = '#d29922';
+  } else if (status === 'invalido') {
+    input.style.borderColor = '#f85149';
+  } else {
+    input.style.borderColor = '';
+  }
+}
+
+// Retorna o tipo de rosca em formato aceito por faixaRolo()
+function tipoRoscaParaFaixa(tab) {
+  if (tab === 'metrica') return 'metrica';
+  if (tab === 'unc') return 'unc';
+  if (tab === 'unf') return 'unf';
+  if (tab === 'bsw') return 'whitworth';
+  return 'metrica';
+}
 
   function calcular() {
     const sel = fieldsWrap.querySelector('#rosca-sel');

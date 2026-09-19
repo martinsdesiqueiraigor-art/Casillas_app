@@ -17,20 +17,29 @@ function isInputTarget(el) {
 }
 
 function insertAtCursor(input, text) {
-  const start = input.selectionStart ?? input.value.length;
-  const end = input.selectionEnd ?? input.value.length;
-  const value = input.value;
-  input.value = value.slice(0, start) + text + value.slice(end);
-  const pos = start + text.length;
-  try {
-    input.setSelectionRange(pos, pos);
-  } catch {
-    // ignora
+  // Se o input está focado, usa a posição do cursor.
+  // Caso contrário, adiciona ao FINAL do valor (fallback seguro).
+  if (document.activeElement === input) {
+    const start = input.selectionStart ?? input.value.length;
+    const end = input.selectionEnd ?? input.value.length;
+    const value = input.value;
+    input.value = value.slice(0, start) + text + value.slice(end);
+    const pos = start + text.length;
+    try {
+      input.setSelectionRange(pos, pos);
+    } catch {
+      // ignora
+    }
+  } else {
+    // Fallback: adiciona ao final
+    input.value = (input.value || '') + text;
   }
   input.dispatchEvent(new Event('input', { bubbles: true }));
 }
 
 function deleteBack(input) {
+  if (!input) return;
+
   const start = input.selectionStart ?? input.value.length;
   const end = input.selectionEnd ?? input.value.length;
   const value = input.value;
@@ -42,7 +51,14 @@ function deleteBack(input) {
     input.value = value.slice(0, start - 1) + value.slice(start);
     try { input.setSelectionRange(start - 1, start - 1); } catch {}
   }
+
+  // Dispara input + mantém o foco no input
   input.dispatchEvent(new Event('input', { bubbles: true }));
+
+  // Garante que o input continua focado
+  if (document.activeElement !== input) {
+    try { input.focus(); } catch {}
+  }
 }
 
 function handleKey(key) {
@@ -99,9 +115,17 @@ function buildKeyboard() {
 
 export function initKeyboard() {
   keyboardEl = document.getElementById('custom-keyboard');
-  if (!keyboardEl || keyboardEl.dataset.init === '1') return;
-  keyboardEl.dataset.init = '1';
+  if (!keyboardEl) return;
+
+  // Verifica se o teclado já foi construído (tem filhos)
+  const jaConstruido = keyboardEl.children.length > 0;
+
+  if (jaConstruido) return;
+
+  // Reconstrói o teclado do zero
+  while (keyboardEl.firstChild) keyboardEl.removeChild(keyboardEl.firstChild);
   keyboardEl.appendChild(buildKeyboard());
+  keyboardEl.dataset.init = '1';
 }
 
 export function bindInputsToKeyboard(container) {

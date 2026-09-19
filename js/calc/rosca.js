@@ -141,6 +141,46 @@ export function calcularPolegada(d, tpi, tipo = 'UNC') {
   };
 }
 
+// Calcula a faixa ideal do diâmetro do rolo (dw) por tipo de rosca
+// Fórmulas baseadas na norma DIN 13 (métrica 60°) e Whitworth (55°)
+export function faixaRolo(passo, tipo = 'metrica') {
+  if (!Number.isFinite(passo) || passo <= 0) return null;
+
+  const t = String(tipo).toLowerCase();
+  let fIdeal, fMin, fMax;
+
+  if (t === 'whitworth' || t === 'bsw' || t === 'bsf') {
+    // Rosca Whitworth (55°)
+    fIdeal = 0.5637;
+    fMin   = 0.54;
+    fMax   = 0.59;
+  } else {
+    // Métrica ISO, UNC, UNF (60°)
+    fIdeal = 0.57735;
+    fMin   = 0.55;
+    fMax   = 0.61;
+  }
+
+  const ideal = passo * fIdeal;
+  const min   = passo * fMin;
+  const max   = passo * fMax;
+
+  return {
+    ideal: ideal,
+    min: min,
+    max: max,
+    classificar: (dw) => {
+      if (!Number.isFinite(dw) || dw <= 0) return 'vazio';
+      if (dw >= min && dw <= max) return 'ideal';
+      const range = max - min;
+      const limInf = min - range * 0.2;
+      const limSup = max + range * 0.2;
+      if (dw >= limInf && dw <= limSup) return 'aviso';
+      return 'invalido';
+    }
+  };
+}
+
 // Medida sobre 3 rolos (fios) para rosca métrica 60°
 // M = d2 + 3*dw - (P/2) * (1 + cot(α/2)) ... fórmula simplificada
 // Para α = 60°, M = d2 + 3*dw - 0.866*P  (fórmula simplificada)
