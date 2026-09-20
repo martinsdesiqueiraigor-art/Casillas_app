@@ -128,19 +128,24 @@ export function initShareButton() {
   if (!btn || btn.dataset.wired === '1') return;
   btn.dataset.wired = '1';
 
+  // URL da landing page (não do app)
+  const LANDING_URL = 'https://martinsdesiqueiraigor-art.github.io/Casillas-landing/';
+
   btn.addEventListener('click', async () => {
     // Fecha o menu lateral
     closeMenu();
 
-    const url = window.location.href;
-    const texto = 'Casillas App — Calculadora Técnica de Usinagem';
+    const texto = `🔧 Conheça o Casillas App!
+
+Calculadora Técnica de Usinagem — 11 módulos offline para torneiros, fresadores e ferramenteiros.
+
+📱 Saiba mais: ${LANDING_URL}`;
 
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'Casillas App',
-          text: texto,
-          url: url
+          title: 'Casillas App — Calculadora Técnica de Usinagem',
+          text: texto
         });
       } catch {
         // Usuário cancelou — ignorar
@@ -148,8 +153,7 @@ export function initShareButton() {
     } else {
       // Fallback: copia para clipboard
       try {
-        await navigator.clipboard.writeText(`${texto}\n${url}`);
-        // Importa showToast dinamicamente
+        await navigator.clipboard.writeText(texto);
         const { showToast } = await import('./utils.js');
         showToast('Link copiado!', 'success');
       } catch {
