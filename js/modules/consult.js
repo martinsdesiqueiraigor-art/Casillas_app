@@ -114,7 +114,7 @@ export function render(container) {
   const cardServicos = createElementSafe('div', { class: 'card' });
   cardServicos.appendChild(createElementSafe('h3', {
     class: 'card-title',
-    text: '🔧 Serviços de Usinagem'
+    text: '🔧 Serviços'
   }));
 
   const listaServicos = createElementSafe('div', { class: 'consult-grid' });
@@ -269,7 +269,7 @@ export function render(container) {
   }));
   cardInfo.appendChild(createElementSafe('p', {
     class: 'result-hint',
-    text: 'Casillas App — Calculadora Técnica de Usinagem. Versão 1.0. Funciona 100% offline. Todos os cálculos seguem normas ISO, DIN e práticas de oficina.'
+    text: 'Casillas App — Calculadora Técnica de Usinagem. Versão 1.2. Funciona 100% offline. Todos os cálculos seguem normas ISO, DIN e práticas de oficina.'
   }));
   container.appendChild(cardInfo);
 
