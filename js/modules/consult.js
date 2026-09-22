@@ -10,7 +10,7 @@ import { WHATSAPP } from '../trial.js';
 // ═══════════════════════════════════════════════════════════
 const LINKS = {
   whatsapp:     `https://wa.me/${WHATSAPP}`,
-  instagram:    'https://instagram.com/casillas_usinagembr',
+  instagram:    'https://instagram.com/casillas_usinagem.br',
   youtube:      'https://youtube.com/@casillas_usinagembr',
   grupoWhatsapp: 'https://chat.whatsapp.com/XXXXXXXXX'  // ← trocar depois
 };
@@ -110,7 +110,7 @@ export function render(container) {
   cardContato.appendChild(btnsContato);
   container.appendChild(cardContato);
 
-  // ─── Card 2: Serviços de Usinagem ───
+  // ─── Card 2: Serviços  ───
   const cardServicos = createElementSafe('div', { class: 'card' });
   cardServicos.appendChild(createElementSafe('h3', {
     class: 'card-title',
