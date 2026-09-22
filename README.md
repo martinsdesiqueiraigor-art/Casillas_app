@@ -2,10 +2,6 @@
 
 > **Calculadora Técnica de Usinagem** — PWA offline-first para torneiros, fresadores e ferramenteiros.
 
-![Status](https://img.shields.io/badge/status-ativo-success)
-![Versão](https://img.shields.io/badge/versão-1.0-blue)
-![Licença](https://img.shields.io/badge/licença-comercial-orange)
-
 ---
 
 ## 📖 Sobre
@@ -100,19 +96,7 @@ casillas-app/
 
 ## 🚀 Como Usar
 
-### No Termux (desenvolvimento)
 
-cd /storage/emulated/0/Acode/casillas-app
-python -m http.server 8080
-
-Depois abra no navegador do celular: http://localhost:8080
-
-### No navegador (Android)
-
-1. Abra o Chrome e acesse http://localhost:8080
-2. Aguarde o carregamento completo (o Service Worker será registrado)
-3. Toque no botão "📲 Instalar App" no canto inferior esquerdo
-4. Confirme a instalação
 
 ### Uso offline
 
@@ -168,12 +152,6 @@ O Casillas App usa trial de 30 dias + ativação por código.
 3. Se o relógio for retrocedido, o app bloqueia
 4. Após 30 dias, exige ativação
 
-### Como gerar o código
-
-1. Abra gerar-codigo.html no navegador
-2. Cole o Device ID mostrado no app
-3. O gerador calcula o código XXXX-XXXX-XXXX-XXXX
-4. Cole na tela de ativação
 
 ### Fórmula
 
