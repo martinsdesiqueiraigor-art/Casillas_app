@@ -11,8 +11,8 @@ import { WHATSAPP } from '../trial.js';
 const LINKS = {
   whatsapp:     `https://wa.me/${WHATSAPP}`,
   instagram:    'https://instagram.com/casillas_usinagem.br',
-  youtube:      'https://youtube.com/@casillas_usinagembr',
-  grupoWhatsapp: 'https://chat.whatsapp.com/XXXXXXXXX'  // ← trocar depois
+  youtube:      'https://youtube.com/@Casillasusinagembr',
+  grupoWhatsapp: 'https://chat.whatsapp.com/Idw4zuVdlOW1oZf3DZLZ75'
 };
 
 // ═══════════════════════════════════════════════════════════
@@ -46,17 +46,6 @@ const CURSOS = [
     titulo: 'Programação Parametrizada',
     desc: 'Fanuc Macro B, variáveis, subprogramas e automação de ciclos.'
   }
-];
-
-// ═══════════════════════════════════════════════════════════
-// MATERIAIS (PDFs)
-// ═══════════════════════════════════════════════════════════
-const MATERIAIS = [
-  { icon: '📄', titulo: 'Manual de Roscas',          arquivo: 'manual-roscas.pdf' },
-  { icon: '📊', titulo: 'Manual de Tolerâncias ISO', arquivo: 'manual-tolerancias.pdf' },
-  { icon: '🔄', titulo: 'Tabela de Conversão',       arquivo: 'tabela-conversao.pdf' },
-  { icon: '🖥️', titulo: 'Manual de Programação CNC', arquivo: 'manual-cnc.pdf' },
-  { icon: '🔧', titulo: 'Manual de Usinagem',        arquivo: 'manual-usinagem.pdf' }
 ];
 
 // ═══════════════════════════════════════════════════════════
@@ -105,16 +94,17 @@ export function render(container) {
     text: '📱 WhatsApp',
     onclick: () => abrirWhatsApp('Olá! Vim pelo Casillas App.')
   }));
+  btnsContato.appendChild(botaoLink('👥 Entrar no Grupo', LINKS.grupoWhatsapp, 'btn btn-outline'));
   btnsContato.appendChild(botaoLink('📷 Instagram', LINKS.instagram, 'btn btn-outline'));
   btnsContato.appendChild(botaoLink('🎥 YouTube', LINKS.youtube, 'btn btn-outline'));
   cardContato.appendChild(btnsContato);
   container.appendChild(cardContato);
 
-  // ─── Card 2: Serviços  ───
+  // ─── Card 2: Serviços de Usinagem ───
   const cardServicos = createElementSafe('div', { class: 'card' });
   cardServicos.appendChild(createElementSafe('h3', {
     class: 'card-title',
-    text: '🔧 Serviços'
+    text: '🔧 Serviços de Usinagem'
   }));
 
   const listaServicos = createElementSafe('div', { class: 'consult-grid' });
@@ -163,70 +153,7 @@ export function render(container) {
   cardCursos.appendChild(listaCursos);
   container.appendChild(cardCursos);
 
-  // ─── Card 4: Comunidade ───
-  const cardComunidade = createElementSafe('div', { class: 'card' });
-  cardComunidade.appendChild(createElementSafe('h3', {
-    class: 'card-title',
-    text: '👥 Comunidade'
-  }));
-  cardComunidade.appendChild(createElementSafe('p', {
-    class: 'result-hint',
-    text: 'Participe do nosso grupo, siga as redes sociais e fique por dentro das novidades.'
-  }));
-
-  const btnsComunidade = createElementSafe('div', { class: 'btn-row' });
-  btnsComunidade.appendChild(createElementSafe('button', {
-    type: 'button',
-    class: 'btn btn-primary',
-    text: '💬 Entrar no Grupo',
-    onclick: () => abrirLink(LINKS.grupoWhatsapp)
-  }));
-  btnsComunidade.appendChild(botaoLink('📷 Instagram', LINKS.instagram, 'btn btn-outline'));
-  btnsComunidade.appendChild(botaoLink('🎥 YouTube', LINKS.youtube, 'btn btn-outline'));
-  cardComunidade.appendChild(btnsComunidade);
-  container.appendChild(cardComunidade);
-
-  // ─── Card 5: Materiais (PDFs) ───
-  const cardMateriais = createElementSafe('div', { class: 'card' });
-  cardMateriais.appendChild(createElementSafe('h3', {
-    class: 'card-title',
-    text: '📚 Materiais de estudo'
-  }));
-  cardMateriais.appendChild(createElementSafe('p', {
-    class: 'result-hint',
-    text: 'Toque para abrir ou baixar os manuais em PDF.'
-  }));
-
-  const listaMateriais = createElementSafe('div', { class: 'materiais-list' });
-  MATERIAIS.forEach((m) => {
-    const item = createElementSafe('div', {
-      class: 'material-item',
-      role: 'button',
-      tabindex: '0',
-      onclick: async () => {
-        const url = `./manuais/${m.arquivo}`;
-        try {
-          const resp = await fetch(url, { method: 'HEAD' });
-          if (resp.ok) {
-            window.open(url, '_blank');
-          } else {
-            showToast('Material em preparação. Em breve!', 'warning');
-          }
-        } catch {
-          showToast('Material em preparação. Em breve!', 'warning');
-        }
-      }
-    }, [
-      createElementSafe('span', { class: 'material-icon', text: m.icon }),
-      createElementSafe('span', { class: 'material-title', text: m.titulo }),
-      createElementSafe('span', { class: 'material-action', text: '⬇️' })
-    ]);
-    listaMateriais.appendChild(item);
-  });
-  cardMateriais.appendChild(listaMateriais);
-  container.appendChild(cardMateriais);
-
-  // ─── Card 6: Ativação ───
+  // ─── Card 5: Ativação ───
   const cardAtivacao = createElementSafe('div', { class: 'card' });
   cardAtivacao.appendChild(createElementSafe('h3', {
     class: 'card-title',
@@ -269,7 +196,7 @@ export function render(container) {
   }));
   cardInfo.appendChild(createElementSafe('p', {
     class: 'result-hint',
-    text: 'Casillas App — Calculadora Técnica de Usinagem. Versão 1.3.0. Funciona 100% offline. Todos os cálculos seguem normas ISO, DIN e práticas de oficina.'
+    text: 'Casillas App — Calculadora Técnica de Usinagem. Versão 1.0. Funciona 100% offline. Todos os cálculos seguem normas ISO, DIN e práticas de oficina.'
   }));
   container.appendChild(cardInfo);
 

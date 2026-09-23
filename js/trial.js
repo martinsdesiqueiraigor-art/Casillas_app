@@ -20,6 +20,122 @@ const KEYS = {
 };
 
 // ═══════════════════════════════════════════════════════════
+// ANTI-BURLA — Chaves e funções
+// ═══════════════════════════════════════════════════════════
+const LS_KEYS = {
+  installBackup: 'casillas-install-backup',
+  installHash: 'casillas-install-hash',
+  fingerprint: 'casillas-fingerprint',
+  tentativas: 'casillas-tentativas-manipulacao'
+};
+
+const MAX_TENTATIVAS_MANIPULACAO = 1;  // 1 exceção, depois bloqueia
+
+// Gera fingerprint único do dispositivo
+function gerarFingerprint() {
+  try {
+    const dados = [
+      navigator.userAgent || '',
+      (screen.width || 0) + 'x' + (screen.height || 0),
+      navigator.language || '',
+      Intl.DateTimeFormat().resolvedOptions().timeZone || '',
+      navigator.platform || '',
+      navigator.hardwareConcurrency || 0
+    ].join('|');
+
+    // Hash simples (djb2) para não guardar o fingerprint em claro
+    let h = 5381;
+    for (let i = 0; i < dados.length; i++) {
+      h = ((h << 5) + h + dados.charCodeAt(i)) >>> 0;
+    }
+    return h.toString(16).padStart(8, '0').toUpperCase();
+  } catch {
+    return 'UNKNOWN';
+  }
+}
+
+// Gera hash do installDate + deviceId (usa SHA-256 se disponível)
+async function gerarHashInstall(installDate, deviceId) {
+  const dados = `${installDate}:${deviceId}:CasillasApp_SALT_2026_!@#`;
+
+  if (self.crypto && self.crypto.subtle && self.crypto.subtle.digest) {
+    try {
+      const enc = new TextEncoder();
+      const buf = await self.crypto.subtle.digest('SHA-256', enc.encode(dados));
+      return Array.from(new Uint8Array(buf))
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('')
+        .toUpperCase();
+    } catch {
+      // Fallback abaixo
+    }
+  }
+
+  // Fallback: hash simples (djb2)
+  let h = 5381;
+  for (let i = 0; i < dados.length; i++) {
+    h = ((h << 5) + h + dados.charCodeAt(i)) >>> 0;
+  }
+  return h.toString(16).padStart(8, '0').toUpperCase().padEnd(64, '0');
+}
+
+// Verifica integridade do trial (IndexedDB + localStorage + fingerprint)
+async function verificarIntegridade(installDate) {
+  const deviceId = getOrCreateDeviceId();
+  const lsInstall = localStorage.getItem(LS_KEYS.installBackup);
+  const lsHash = localStorage.getItem(LS_KEYS.installHash);
+  const lsFingerprint = localStorage.getItem(LS_KEYS.fingerprint);
+  const tentativas = parseInt(localStorage.getItem(LS_KEYS.tentativas) || '0', 10);
+
+  const fingerprintAtual = gerarFingerprint();
+  const hashEsperado = await gerarHashInstall(installDate, deviceId);
+
+  // ─── Caso 1: Primeira vez (tudo vazio) ───
+  if (!lsInstall && !lsHash && !lsFingerprint) {
+    localStorage.setItem(LS_KEYS.installBackup, String(installDate));
+    localStorage.setItem(LS_KEYS.installHash, hashEsperado);
+    localStorage.setItem(LS_KEYS.fingerprint, fingerprintAtual);
+    return { ok: true, motivo: 'primeira-vez', tentativas };
+  }
+
+  // ─── Caso 2: localStorage tem dados, mas IndexedDB está vazio ───
+  if (lsInstall && !installDate) {
+    return { ok: false, motivo: 'indexeddb-limpo', tentativas };
+  }
+
+  // ─── Caso 3: Fingerprint mudou (troca de aparelho?) ───
+  if (lsFingerprint && lsFingerprint !== fingerprintAtual) {
+    return { ok: false, motivo: 'fingerprint-mudou', tentativas };
+  }
+
+  // ─── Caso 4: Hash não bate (manipulação) ───
+  if (lsHash && lsHash !== hashEsperado) {
+    return { ok: false, motivo: 'hash-diferente', tentativas };
+  }
+
+  // ─── Caso 5: installDate do IndexedDB é MAIOR que o do localStorage ───
+  // (indica que o IndexedDB foi sobrescrito com data mais recente)
+  if (lsInstall && installDate > parseInt(lsInstall, 10)) {
+    return { ok: false, motivo: 'data-futura', tentativas };
+  }
+
+  // ─── Tudo OK ───
+  return { ok: true, motivo: 'ok', tentativas };
+}
+
+// Registra uma tentativa de manipulação
+function registrarManipulacao() {
+  const tentativas = parseInt(localStorage.getItem(LS_KEYS.tentativas) || '0', 10);
+  localStorage.setItem(LS_KEYS.tentativas, String(tentativas + 1));
+  return tentativas + 1;
+}
+
+// Reseta as tentativas (após ativação legítima)
+function resetarTentativas() {
+  localStorage.removeItem(LS_KEYS.tentativas);
+}
+
+// ═══════════════════════════════════════════════════════════
 // LISTA DE CÓDIGOS VÁLIDOS (hash FNV-1a, 8 caracteres)
 // ═══════════════════════════════════════════════════════════
 // IMPORTANTE: Esta lista é gerada pelo gerar-codigo.html
@@ -227,6 +343,9 @@ function wireActivationButtons() {
         await setDB('config', KEYS.activated, true);
         await setDB('config', KEYS.activeCode, resultado.codigo);
 
+        // Anti-burla: limpa tentativas após ativação legítima
+        resetarTentativas();
+
         hideActivationScreen();
         const banner = document.getElementById('trial-banner');
         if (banner) banner.classList.add('hidden');
@@ -285,9 +404,52 @@ export async function checkTrialStatus() {
   const now = Date.now();
 
   let installDate = await getDB('config', KEYS.install);
+
+  // ═══════════════════════════════════════════════════════════
+  // ANTI-BURLA: verificar integridade ANTES de calcular o trial
+  // ═══════════════════════════════════════════════════════════
+  const integridade = await verificarIntegridade(installDate);
+
+  if (!integridade.ok) {
+    // Se o app está ativado, ignora a manipulação (cliente pagou)
+    const isActivated = (await getDB('config', KEYS.activated)) === true;
+    if (!isActivated) {
+      const tentativas = registrarManipulacao();
+      console.warn('[TRIAL] Manipulação detectada:', integridade.motivo, '| Tentativas:', tentativas);
+
+      // Se excedeu o limite, bloqueia
+      if (tentativas > MAX_TENTATIVAS_MANIPULACAO) {
+        showActivationScreen('Detectamos uma manipulação nos dados do app. Ative para continuar.');
+        return { ok: false, activated: false, reason: 'manipulado', daysLeft: 0 };
+      }
+
+      // Senão, avisa e restaura do localStorage
+      if (typeof window !== 'undefined' && window.showToast) {
+        window.showToast('Detectamos uma inconsistência. Não limpe os dados do app.', 'warning');
+      }
+    }
+
+    // Restaura o installDate do localStorage (se existir)
+    const lsInstall = parseInt(localStorage.getItem(LS_KEYS.installBackup) || '0', 10);
+    if (lsInstall > 0) {
+      installDate = lsInstall;
+      await setDB('config', KEYS.install, installDate);
+    }
+  }
+
+  // Se não existir installDate, cria
   if (typeof installDate !== 'number' || !Number.isFinite(installDate)) {
     installDate = now;
     await setDB('config', KEYS.install, installDate);
+  }
+
+  // Se passou por tudo, atualiza o backup no localStorage
+  if (integridade.ok && typeof installDate === 'number') {
+    const deviceId = getOrCreateDeviceId();
+    const hash = await gerarHashInstall(installDate, deviceId);
+    localStorage.setItem(LS_KEYS.installBackup, String(installDate));
+    localStorage.setItem(LS_KEYS.installHash, hash);
+    localStorage.setItem(LS_KEYS.fingerprint, gerarFingerprint());
   }
 
   const isActivated = (await getDB('config', KEYS.activated)) === true;

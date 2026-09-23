@@ -27,3 +27,16 @@ debug-trial.html
 
 # Página de teste de ícones (não publicar)
 test-icons.html
+
+# Arquivos temporários
+README-github.md
+*.broken
+
+# Páginas de debug
+debug-trial.html
+debug-ls.html
+test-icons.html
+
+# Backups
+*.bak
+*.bak-*
