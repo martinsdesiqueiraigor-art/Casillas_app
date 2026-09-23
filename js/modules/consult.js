@@ -196,7 +196,7 @@ export function render(container) {
   }));
   cardInfo.appendChild(createElementSafe('p', {
     class: 'result-hint',
-    text: 'Casillas App — Calculadora Técnica de Usinagem. Versão 1.0. Funciona 100% offline. Todos os cálculos seguem normas ISO, DIN e práticas de oficina.'
+    text: 'Casillas App — Calculadora Técnica de Usinagem. Versão 1.3.0. Funciona 100% offline. Todos os cálculos seguem normas ISO, DIN e práticas de oficina.'
   }));
   container.appendChild(cardInfo);
 

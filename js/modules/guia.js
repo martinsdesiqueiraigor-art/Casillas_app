@@ -207,7 +207,7 @@ async function aplicarFiltro(containerResultados) {
   updateKPIs([
     { label: 'Resultados', value: String(itens.length) },
     { label: 'Total', value: String(dados.itens.length) },
-    { label: 'Versão', value: dados.versao || '1.0' }
+    { label: 'Guia', value: dados.versao || '1.0' }
   ]);
 }
 
