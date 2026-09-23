@@ -224,3 +224,295 @@
   font-family: var(--font-mono);
   font-size: 11px;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   MÓDULO: GUIA DE PROGRAMAÇÃO CNC
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─── Cabeçalho ─── */
+.guia-header {
+  text-align: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 20px;
+}
+
+.guia-titulo {
+  font-size: var(--fs-xl);
+  color: var(--accent-primary);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.guia-subtitulo {
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+}
+
+/* ─── Filtros ─── */
+.guia-filtros {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.guia-filtro-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.guia-filtro-group label {
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.guia-filtro-group .input {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--bg-input);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-md);
+  font-family: var(--font-sans);
+  transition: border-color var(--t-fast);
+}
+
+.guia-filtro-group .input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.guia-filtro-group select.input {
+  font-family: var(--font-sans);
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238b949e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+/* ─── Contador ─── */
+.guia-contador-wrap {
+  text-align: center;
+  padding: 8px 0;
+  border-top: 1px solid var(--border-color);
+}
+
+.guia-contador {
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+/* ─── Cards de resultado ─── */
+.guia-resultados {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.guia-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: border-color var(--t-fast);
+}
+
+.guia-card:hover {
+  border-color: var(--accent-secondary);
+}
+
+/* ─── Header do card (badges) ─── */
+.guia-card-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.guia-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.guia-badge-siemens {
+  background: rgba(0, 154, 68, 0.15);
+  color: #00b95f;
+  border: 1px solid #00b95f;
+}
+
+.guia-badge-fanuc {
+  background: rgba(255, 204, 0, 0.15);
+  color: #ffcc00;
+  border: 1px solid #ffcc00;
+}
+
+.guia-badge-haas {
+  background: rgba(220, 53, 69, 0.15);
+  color: #dc3545;
+  border: 1px solid #dc3545;
+}
+
+.guia-badge-maquina {
+  background: rgba(88, 166, 255, 0.15);
+  color: var(--accent-secondary);
+  border: 1px solid var(--accent-secondary);
+}
+
+.guia-badge-categoria {
+  background: rgba(240, 136, 62, 0.15);
+  color: var(--accent-primary);
+  border: 1px solid var(--accent-primary);
+}
+
+/* ─── Título do card ─── */
+.guia-card-titulo {
+  font-size: var(--fs-md);
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.guia-card-codigo {
+  color: var(--accent-primary);
+  font-family: var(--font-mono);
+}
+
+/* ─── Labels internos ─── */
+.guia-label {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* ─── Bloco de código ─── */
+.guia-code {
+  background: #010409;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--accent-secondary);
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-x: auto;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.guia-code-exemplo {
+  color: var(--success);
+}
+
+/* ─── Lista de parâmetros ─── */
+.guia-params {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.guia-params li {
+  font-size: 12px;
+  line-height: 1.4;
+  padding: 3px 0;
+  border-bottom: 1px dashed var(--border-color);
+}
+
+.guia-params li:last-child {
+  border-bottom: none;
+}
+
+.guia-param-nome {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--accent-primary);
+}
+
+.guia-param-desc {
+  color: var(--text-secondary);
+}
+
+/* ─── Botão copiar ─── */
+.guia-btn-copiar {
+  align-self: flex-start;
+  background: var(--bg-input);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--t-fast), border-color var(--t-fast);
+  margin-top: 4px;
+}
+
+.guia-btn-copiar:active {
+  background: var(--accent-primary);
+  color: #1a1108;
+  border-color: var(--accent-primary);
+}
+
+/* ─── Mensagem "nenhum resultado" ─── */
+.guia-vazio {
+  background: var(--bg-card);
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 40px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.guia-vazio-icon {
+  font-size: 48px;
+  line-height: 1;
+}
+
+.guia-vazio h3 {
+  font-size: var(--fs-md);
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.guia-vazio p {
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+  max-width: 320px;
+  line-height: 1.5;
+}
+
+.guia-vazio-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 320px;
+  margin-top: 8px;
+}
+
+.guia-vazio-btns .btn {
+  width: 100%;
+}

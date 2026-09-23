@@ -133,6 +133,8 @@ export function bindInputsToKeyboard(container) {
   const inputs = container.querySelectorAll('input[inputmode], input[type="text"], input[type="number"]');
   inputs.forEach((input) => {
     if (input.dataset.kbdBound === '1') return;
+    // Respeita inputs que pedem teclado nativo
+    if (input.dataset.nativeKeyboard === '1') return;
     input.dataset.kbdBound = '1';
     input.setAttribute('inputmode', 'none');
     input.addEventListener('focus', () => showKeyboard(input));

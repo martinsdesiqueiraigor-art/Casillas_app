@@ -20,6 +20,7 @@ const MODULE_LOADERS = {
   chaveta:   () => import('./modules/chaveta.js'),
   conicpad:  () => import('./modules/conicpad.js'),
   prog:      () => import('./modules/prog.js'),
+  guia:      () => import('./modules/guia.js'),
   consult:   () => import('./modules/consult.js')
 };
 
@@ -34,6 +35,7 @@ const MODULE_TITLES = {
   chaveta:  { name: 'Chaveta DIN 6885',   icon: '🔧' },
   conicpad: { name: 'Conicidades Padrão', icon: '🎯' },
   prog:     { name: 'Programação CNC',    icon: '🖥️' },
+  guia:     { name: 'Guia de Programação', icon: '📖' },
   consult:  { name: 'Consultoria',        icon: '💬' }
 };
 

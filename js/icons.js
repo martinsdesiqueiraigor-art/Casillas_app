@@ -148,6 +148,22 @@ export function iconConicPad(size = 24) {
 }
 
 // ═══════════════════════════════════════════════════════════
+// ÍCONE DO GUIA DE PROGRAMAÇÃO
+// ═══════════════════════════════════════════════════════════
+
+// Livro aberto com código (</>) — Guia de Programação
+export function iconGuia(size = 24) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}"
+    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M3 5 L3 19 C3 19, 6 17.5, 12 19 C18 17.5, 21 19, 21 19 L21 5 C21 5, 18 6.5, 12 5 C6 6.5, 3 5, 3 5 Z" />
+    <path d="M12 5 L12 19" />
+    <path d="M9.5 9.5 L8 11 L9.5 12.5" />
+    <path d="M14.5 9.5 L16 11 L14.5 12.5" />
+  </svg>`;
+}
+
+// ═══════════════════════════════════════════════════════════
 // ÍCONES DAS CATEGORIAS DO MENU
 // ═══════════════════════════════════════════════════════════
 
@@ -208,6 +224,7 @@ export function iconEngrenagem(size = 24) {
 export const ICONS = {
   // Módulos
   trig:      iconTrig,
+  guia:      iconGuia,
   coni:      iconConi,
   poly:      iconPoly,
   furos:     iconFuros,
