@@ -42,3 +42,4 @@ test-icons.html
 *.bak-*
 
 supabase/.temp/
+supabase/.branches/
