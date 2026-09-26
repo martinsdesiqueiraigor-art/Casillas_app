@@ -40,3 +40,5 @@ test-icons.html
 # Backups
 *.bak
 *.bak-*
+
+supabase/.temp/
