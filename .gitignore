@@ -43,3 +43,5 @@ test-icons.html
 
 supabase/.temp/
 supabase/.branches/
+
+node_modules/

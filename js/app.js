@@ -7,6 +7,7 @@ import { checkTrialStatus } from './trial.js';
 import { initKeyboard, bindInputsToKeyboard, hideKeyboard } from './keyboard.js';
 import {initMenu, setActiveMenuItem, initOptionsMenu, closeOptionsMenu, initShareButton, renderMenuIcons } from './menu.js';
 import { ICONS } from './icons.js';
+import { supabase } from './supabase.bundle.js';
 
 // Registro dos módulos (carregamento dinâmico)
 const MODULE_LOADERS = {
