@@ -4,11 +4,64 @@
 // Códigos podem ser revogados (lista negra embutida).
 
 import { getDB, setDB } from './db.js';
+import { supabase } from './supabase.bundle.js';
 
 const TRIAL_DAYS = 30;
 const WHATSAPP = '5519996816755';
 const DAY_MS = 86400000;
 const MAX_DEVICES_PER_CODE = 3;
+
+async function getSupabaseTrial() {
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+  if (userError) {
+    console.error('[TRIAL] Erro ao obter usuário:', userError);
+    return { ok: false, reason: 'auth-error' };
+  }
+
+  if (!user) {
+    return { ok: false, reason: 'not-authenticated' };
+  }
+
+  const { data, error } = await supabase.rpc('start_casillas_trial');
+
+  if (error) {
+    console.error('[TRIAL] Erro ao iniciar/consultar trial:', error);
+    return { ok: false, reason: 'supabase-error', error };
+  }
+
+  if (!data) {
+    return { ok: false, reason: 'trial-not-found' };
+  }
+
+  const endsAt = new Date(data.ends_at);
+  const now = new Date();
+
+  if (Number.isNaN(endsAt.getTime())) {
+    return { ok: false, reason: 'invalid-end-date' };
+  }
+
+  if (endsAt <= now || data.status !== 'ACTIVE') {
+    return {
+      ok: false,
+      activated: false,
+      reason: 'expired',
+      daysLeft: 0
+    };
+  }
+
+  const daysLeft = Math.max(
+    0,
+    Math.ceil((endsAt.getTime() - now.getTime()) / DAY_MS)
+  );
+
+  return {
+    ok: true,
+    activated: false,
+    daysLeft,
+    trial: data
+  };
+}
 
 const KEYS = {
   install: 'trial-install-date',
